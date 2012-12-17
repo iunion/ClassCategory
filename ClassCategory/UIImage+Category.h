@@ -39,10 +39,16 @@
 + (id)createRoundedRectImage:(UIImage*)image size:(CGSize)size radius:(NSInteger)r;
 + (id)createRoundedRectImage:(UIImage*)image radius:(NSInteger)r;
 
+// 缩放尺寸最终大小是newSize
++ (UIImage*)imageWithImage:(UIImage*)image scaledToSize:(CGSize)newSize;
+
 // 裁剪图片
 - (UIImage *) imageCroppedToRect:(CGRect)rect;
 // 裁减正方形区域
 - (UIImage *) squareImage;
+
+// 按size的宽高比例截取
+- (UIImage *) ImageFitInSize:(CGSize)size;
 
 // 画水印
 // 图片水印
@@ -58,10 +64,17 @@
 
 // 保存图像文件
 - (BOOL) writeImageToFileAtPath:(NSString*)aPath;
+// 缩放尺寸最终大小是rect.size
 -(UIImage *)resizeImage:(CGRect)rect;
+// 缩放尺寸最终大小比例缩放
+- (UIImage *) imageReSize:(CGSize)size;
 
 // 图像旋转(角度)
 - (UIImage *) imageRotatedByDegrees:(CGFloat)degrees;
+
+// 黑白
+- (UIImage *)convertToGrayScale;    // 有黑底
+- (UIImage *)imageWithBlackWhite;
 
 @end
 

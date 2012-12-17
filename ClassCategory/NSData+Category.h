@@ -23,3 +23,7 @@
 - (NSString *)base64Encoding;
 
 @end
+
+@interface NSData (Category)
+- (NSInteger)getImageType;
+@end

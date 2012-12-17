@@ -30,6 +30,7 @@
  */
 
 #import "UIImage+Category.h"
+#import "ARCHelper.h"
 
 static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWidth, float ovalHeight)
 {
@@ -129,7 +130,60 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
 	return [self imageCroppedToRect:CGRectMake(0,0,min,min)];
 }
 
+// 按size的宽高比例截取
+- (UIImage *) ImageFitInSize:(CGSize)size
+{
+    CGFloat x;
+    CGFloat y;
+    CGFloat width;
+    CGFloat height;
+    
+    if (self.size.width <= self.size.height)
+    {
+        CGFloat scale = self.size.width/size.width;
+        
+        x = 0;
+        y = (self.size.height - size.height*scale) / 2;
 
+        width = self.size.width;
+        height = size.height*scale;
+    }
+    else
+    {
+        CGFloat scale = self.size.height/size.height;
+
+        x = (self.size.width - size.width*scale) / 2;
+        y = 0;
+
+        width = size.width*scale;
+        height = self.size.width;
+    }
+    
+	return [self imageCroppedToRect:CGRectMake(x, y, width, height)];
+}
+
+- (UIImage *) imageReSize:(CGSize)size
+{
+    CGFloat width;
+    CGFloat height;
+
+    if (self.size.width >= self.size.height)
+    {
+        CGFloat scale = size.width/self.size.width;
+
+        width = self.size.width*scale;
+        height = self.size.height*scale;
+    }
+    else
+    {
+        CGFloat scale = size.height/self.size.height;
+
+        width = self.size.width*scale;
+        height = self.size.width*scale;
+    }
+
+	return [self resizeImage:CGRectMake(0, 0, width, height)];
+}
 
 // 画水印
 - (UIImage *) imageWithWaterMask:(UIImage*)mask inRect:(CGRect)rect
@@ -288,18 +342,46 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
     return NO;
 }
 
++ (UIImage*)imageWithImage:(UIImage*)image scaledToSize:(CGSize)newSize
+{
+    // Create a graphics image context
+    UIGraphicsBeginImageContext(newSize);
 
--(UIImage *)resizeImage:(CGRect)rect { 
+    // Tell the old image to draw in this new context, with the desired
+    // new size
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+
+    // Get the new image from the context
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+
+    // End the context
+    UIGraphicsEndImageContext();
+        
+    // Return the new image.
+    return newImage;
+}
+
+- (UIImage *)resizeImage:(CGRect)rect
+{
+    //根据size大小创建一个基于位图的图形上下文
+    UIGraphicsBeginImageContext(rect.size);
     
-    UIGraphicsBeginImageContext(rect.size);//根据size大小创建一个基于位图的图形上下文 
-    CGContextRef currentContext = UIGraphicsGetCurrentContext();//获取当前quartz 2d绘图环境 
-    CGContextClipToRect(currentContext, rect);//设置当前绘图环境到矩形框 
-    [self drawInRect:rect]; 
-    UIImage *cropped = UIGraphicsGetImageFromCurrentImageContext();//获得图片 
-    UIGraphicsEndImageContext();//从当前堆栈中删除quartz 2d绘图环境 
+    //获取当前quartz 2d绘图环境
+    CGContextRef currentContext = UIGraphicsGetCurrentContext();
+    //设置当前绘图环境到矩形框
+    CGContextClipToRect(currentContext, rect);
+    [self drawInRect:rect];
+    //获得图片
+    UIImage *cropped = UIGraphicsGetImageFromCurrentImageContext();
+    
+    //从当前堆栈中删除quartz 2d绘图环境
+    UIGraphicsEndImageContext();
     
     return cropped;
 }
+
+CGFloat DegreesToRadians(CGFloat degrees);
+CGFloat RadiansToDegrees(CGFloat radians);
 
 
 CGFloat DegreesToRadians(CGFloat degrees) {return degrees * M_PI / 180;};
@@ -308,7 +390,7 @@ CGFloat RadiansToDegrees(CGFloat radians) {return radians * 180/M_PI;};
 - (UIImage *)imageRotatedByDegrees:(CGFloat)degrees
 {  
     // calculate the size of the rotated view's containing box for our drawing space
-    UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.size.width, self.size.height)];
+    UIView *rotatedViewBox = [[[UIView alloc] initWithFrame:CGRectMake(0,0,self.size.width, self.size.height)] autorelease];
     CGAffineTransform t = CGAffineTransformMakeRotation(DegreesToRadians(degrees));
     rotatedViewBox.transform = t;
     CGSize rotatedSize = rotatedViewBox.frame.size;
@@ -332,6 +414,98 @@ CGFloat RadiansToDegrees(CGFloat radians) {return radians * 180/M_PI;};
     UIGraphicsEndImageContext();
     
     return newImage;
+}
+
+- (UIImage*)convertToGrayScale
+{
+	/* const UInt8 luminance = (red * 0.2126) + (green * 0.7152) + (blue * 0.0722); // Good luminance value */
+	/// Create a gray bitmap context
+	const size_t width = (size_t)self.size.width;
+	const size_t height = (size_t)self.size.height;
+
+    CGRect imageRect = CGRectMake(0, 0, self.size.width, self.size.height);
+
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
+	CGContextRef bmContext = CGBitmapContextCreate(NULL, width, height, 8/*Bits per component*/, width * 3, colorSpace, kCGImageAlphaNone);
+	CGColorSpaceRelease(colorSpace);
+	if (!bmContext)
+		return nil;
+
+	/// Image quality
+	CGContextSetShouldAntialias(bmContext, false);
+	CGContextSetInterpolationQuality(bmContext, kCGInterpolationHigh);
+
+	/// Draw the image in the bitmap context
+	CGContextDrawImage(bmContext, imageRect, self.CGImage);
+
+	/// Create an image object from the context
+	CGImageRef grayscaledImageRef = CGBitmapContextCreateImage(bmContext);
+    UIImage *grayscaled = [UIImage imageWithCGImage:grayscaledImageRef scale:self.scale orientation:self.imageOrientation];
+
+	/// Cleanup
+	CGImageRelease(grayscaledImageRef);
+	CGContextRelease(bmContext);
+    
+	return grayscaled;
+}
+
+typedef enum {
+    ALPHA = 0,
+    BLUE = 1,
+    GREEN = 2,
+    RED = 3
+} PIXELS;
+
+
+- (UIImage *)imageWithBlackWhite
+{
+    CGSize size = [self size];
+    int width = size.width;
+    int height = size.height;
+
+    // the pixels will be painted to this array
+    uint32_t *pixels = (uint32_t *) malloc(width * height * sizeof(uint32_t));
+
+    // clear the pixels so any transparency is preserved
+    memset(pixels, 0, width * height * sizeof(uint32_t));
+
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+
+    // create a context with RGBA pixels
+    CGContextRef context = CGBitmapContextCreate(pixels, width, height, 8, width * sizeof(uint32_t), colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedLast);
+
+    // paint the bitmap to our context which will fill in the pixels array
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), [self CGImage]);
+
+
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            uint8_t *rgbaPixel = (uint8_t *) &pixels[y * width + x];
+            // convert to grayscale using recommended method: http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
+            uint32_t gray = 0.3 * rgbaPixel[RED] + 0.59 * rgbaPixel[GREEN] + 0.11 * rgbaPixel[BLUE];
+
+            // set the pixels to gray
+            rgbaPixel[RED] = gray;
+            rgbaPixel[GREEN] = gray;
+            rgbaPixel[BLUE] = gray;
+        }
+    }
+
+    // create a new CGImageRef from our context with the modified pixels
+    CGImageRef image = CGBitmapContextCreateImage(context);
+
+    // we're done with the context, color space, and pixels
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    free(pixels);
+    
+    // make a new UIImage to return
+    UIImage *resultUIImage = [UIImage imageWithCGImage:image];
+    
+    // we're done with image now too
+    CGImageRelease(image);
+    
+    return resultUIImage;
 }
 
 @end

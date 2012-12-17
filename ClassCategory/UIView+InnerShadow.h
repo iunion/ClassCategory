@@ -11,6 +11,7 @@
 
 - (void) addShadow;
 - (void) addShadow:(NSInteger)borderWidth Radius:(CGFloat)radius BorderColor:(UIColor *)borderColor ShadowColor:(UIColor *)shadowColor;
+- (void) addShadow:(NSInteger)borderWidth Radius:(CGFloat)radius BorderColor:(UIColor *)borderColor ShadowColor:(UIColor *)shadowColor Offset:(CGSize)offset Opacity:(float)opacity;
 
 - (void) addCurveShadow;
 - (void) addCurveShadowWithColor:(UIColor *)color;

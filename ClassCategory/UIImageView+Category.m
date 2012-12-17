@@ -30,8 +30,8 @@
  */
 
 #import "UIImageView+Category.h"
-#import "ARCHelper.h"
 #import "UIView+Size.h"
+#import "ARCHelper.h"
 
 
 @implementation UIImageView (wiCategory)

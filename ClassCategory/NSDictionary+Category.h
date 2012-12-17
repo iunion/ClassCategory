@@ -14,6 +14,12 @@
 
 @end
 
+@interface NSDictionary (DeepMutableCopy)
+
+- (NSMutableDictionary *)deepMutableCopy;
+
+@end
+
 @interface NSMutableDictionary (wiCategory)
 
 - (void)setInt:(NSInteger)value forKey:(NSString *)key;

@@ -8,12 +8,15 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
-@interface NSString (wiCategor)
+@interface NSString (wiCategory)
 // 删除空白字符
 + (NSString *) stringTrim:(NSString *)str;
 + (NSString *) stringTrimEnd:(NSString *)str;
 + (NSString *) stringTrimStart:(NSString *)str;
 + (NSString *) string:(NSString *)str appendRandom:(NSInteger)ram;
+
++ (NSString *)getCGFormattedFileSize:(long long)size;
+
 
 // MD5
 - (NSString *) md5HexDigest32;
@@ -24,9 +27,9 @@
 // 获取路径
 - (NSString *) getFilePath;
 // 图片完整地址
-- (NSString *) getLogoImageName:(NSString *)addStr;
-- (NSString *) getContentPreViewImageName;
-- (NSString *) getContentArtworkImageName;
+//- (NSString *) getLogoImageName:(NSString *)addStr;
+//- (NSString *) getContentPreViewImageName;
+//- (NSString *) getContentArtworkImageName;
 
 // 判断Email
 - (BOOL) isEmail;

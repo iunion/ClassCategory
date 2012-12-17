@@ -152,7 +152,7 @@ static NSMutableArray *g_CRC_Tables;
     
 	[self getBytes:aBuffer length:length];
     
-    NSString *formatStr = [[NSString alloc] initWithString:@""];
+    NSString *formatStr = @"";
     for (int i=0; i<length; i++)
     {
         int num = aBuffer[i];
@@ -276,3 +276,61 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 }
 
 @end
+
+@implementation NSData (Category)
+- (NSInteger)getImageType
+{
+    NSInteger Result;
+    NSInteger head;
+    [self getBytes:&head range:NSMakeRange(0, 2)];
+
+    head = head & 0x0000FFFF;
+    //NSLog(@"%d, %x", head, head);
+    switch (head)
+    {
+        case 0x4D42:
+            Result = SDImageType_BMP;
+            break;
+
+        case 0xD8FF:
+            Result = SDImageType_JPEG;
+            break;
+
+        case 0x4947:
+            Result = SDImageType_GIF;
+            break;
+
+        case 0x050A:
+            Result = SDImageType_PCX;
+            break;
+
+        case 0x5089:
+            Result = SDImageType_PNG;
+            break;
+
+        case 0x4238:
+            Result = SDImageType_PSD;
+            break;
+
+        case 0xA659:
+            Result = SDImageType_RAS;
+            break;
+
+        case 0xDA01:
+            Result = SDImageType_SGI;
+            break;
+
+        case 0x4949:
+            Result = SDImageType_TIFF;
+            break;
+
+        default:
+            Result = SDImageType_NONE;
+            break;
+    }
+    
+    return Result;
+}
+
+@end
+

@@ -8,12 +8,11 @@
 
 #import <CommonCrypto/CommonCryptor.h>
 #import "GTMBase64.h"
-
-#import "NSString+Categor.h"
 #import "ARCHelper.h"
-//#import "wiAppDelegate.h"
 
-@implementation NSString (wiCategor)
+#import "NSString+Category.h"
+
+@implementation NSString (wiCategory)
 
 
 - (NSString *) md5HexDigest32
@@ -71,6 +70,7 @@
  mid  中图
  big  大图
  */
+/*
 - (NSString *) getLogoImageName:(NSString *)addStr
 {
     lhAppDelegate* appDelegate = getAppDelegate();
@@ -113,7 +113,7 @@
     
     return fileName;
 }
-
+*/
 /*
  NSString *f = @"/dfdsfsd/1/2/ppp.jpeg";
  
@@ -160,11 +160,11 @@
     NSPredicate *strTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", patternStr];
     if ([strTest evaluateWithObject:self])
     {
-        WILog(@"%@ is Valid UserPasswd", self);  
+        NSLog(@"%@ is Valid UserPasswd", self);
         return YES;
     }
     
-    WILog(@"%@ is inValid UserPasswd", self);  
+    NSLog(@"%@ is inValid UserPasswd", self);  
     return NO;
 }
 
@@ -182,11 +182,11 @@
     NSPredicate *phoneNum = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", num];
     if ([phoneNum evaluateWithObject:self])
     {
-        WILog(@"%@ is Valid mobil Number", self);  
+        NSLog(@"%@ is Valid mobil Number", self);  
         return YES;
     }
 
-    WILog(@"%@ is inValid mobil Number", self);  
+    NSLog(@"%@ is inValid mobil Number", self);  
     return NO;
 }
 
@@ -198,11 +198,11 @@
     NSPredicate *strTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", patternStr];
     if ([strTest evaluateWithObject:self])
     {
-        WILog(@"%@ is Valid VerifyCode", self);  
+        NSLog(@"%@ is Valid VerifyCode", self);  
         return YES;
     }
     
-    WILog(@"%@ is inValid VerifyCode", self);  
+    NSLog(@"%@ is inValid VerifyCode", self);
     return NO;
 }
 
@@ -282,6 +282,7 @@
     
     if (kCCSuccess != ccStatus)
     {
+        free(bufferPtr);
         return @"";
     }
     //if (ccStatus == kCCSuccess) NSLog(@"SUCCESS");
@@ -710,5 +711,22 @@
 	}	
 }
 */
+
++ (NSString *)getCGFormattedFileSize:(long long)size
+{
+    if (size > 1024*1024)
+    {
+        float s = size/1024.0/1024.0;
+        return [NSString stringWithFormat:@"%.1fM",s];
+    }
+    else if(size > 1024)
+    {
+        float s = size/1024.0;
+        return [NSString stringWithFormat:@"%.1fK",s];
+    }
+    
+    return [NSString stringWithFormat:@"%lld",size];
+}
+
 @end
 

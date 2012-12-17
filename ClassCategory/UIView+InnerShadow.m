@@ -69,7 +69,7 @@
 
 @implementation UIView (Shadow)
 
--(void)addShadow
+- (void)addShadow
 {
     CGFloat radius;
     
@@ -81,7 +81,12 @@
     [self addShadow:1 Radius:radius BorderColor:nil ShadowColor:nil];
 }
 
--(void)addShadow:(NSInteger)borderWidth Radius:(CGFloat)radius BorderColor:(UIColor *)borderColor ShadowColor:(UIColor *)shadowColor
+- (void)addShadow:(NSInteger)borderWidth Radius:(CGFloat)radius BorderColor:(UIColor *)borderColor ShadowColor:(UIColor *)shadowColor
+{
+    [self addShadow:borderWidth Radius:radius BorderColor:borderColor ShadowColor:shadowColor Offset:CGSizeMake(1, 1) Opacity:0.3];
+}
+
+- (void)addShadow:(NSInteger)borderWidth Radius:(CGFloat)radius BorderColor:(UIColor *)borderColor ShadowColor:(UIColor *)shadowColor Offset:(CGSize)offset Opacity:(float)opacity
 {
     self.layer.borderWidth  = borderWidth;
     self.layer.cornerRadius = radius;
@@ -93,8 +98,8 @@
     {
         self.layer.borderColor = borderColor.CGColor;
     }
-    [self.layer setShadowOffset:CGSizeMake(1, 1)];
-    [self.layer setShadowOpacity:0.3];
+    [self.layer setShadowOffset:offset];
+    [self.layer setShadowOpacity:opacity];
     [self.layer setShadowColor:[UIColor blackColor].CGColor];
     if (shadowColor == nil)
     {
@@ -106,12 +111,12 @@
     }
 }
 
--(void)addCurveShadow
+- (void)addCurveShadow
 {
     [self addCurveShadowWithColor:nil];
 }
 
--(void)addCurveShadowWithColor:(UIColor *)color
+- (void)addCurveShadowWithColor:(UIColor *)color
 {
 	self.layer.shadowOpacity = 0.4;
 	self.layer.shadowRadius = 1.5;
@@ -135,12 +140,12 @@
 	self.layer.shadowPath = path.CGPath;
 }
 
--(void)addGrayGradientShadow
+- (void)addGrayGradientShadow
 {
     [self addGrayGradientShadowWithColor:nil];
 }
 
--(void)addGrayGradientShadowWithColor:(UIColor *)color
+- (void)addGrayGradientShadowWithColor:(UIColor *)color
 {
 	// 0.8 is a good feeling shadowOpacity
 	self.layer.shadowOpacity = 0.4;
@@ -170,7 +175,7 @@
 	self.layer.shadowRadius = 10.0;
 }
 
--(void)addMovingShadow
+- (void)addMovingShadow
 {
     static float step = 0.0;
 	if (step > 20.0)
