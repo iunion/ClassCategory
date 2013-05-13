@@ -32,24 +32,25 @@
 #import "UIImageView+Category.h"
 #import "UIView+Size.h"
 #import "ARCHelper.h"
-
+#import <ImageIO/ImageIO.h>
+#import "NSData+Category.h"
 
 @implementation UIImageView (wiCategory)
 
 + (id) imageViewWithImageNamed:(NSString*)imageName
 {
-	return [[[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]] autorelease];
+	return [[[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]] ah_autorelease];
 }
 
 + (id) imageViewWithFrame:(CGRect)frame
 {
-	return [[[UIImageView alloc] initWithFrame:frame] autorelease];
+	return [[[UIImageView alloc] initWithFrame:frame] ah_autorelease];
 }
 
 + (id) imageViewWithStretchableImage:(NSString*)imageName Frame:(CGRect)frame
 {
     UIImage *image =[UIImage imageNamed:imageName];
-    UIImageView *imageView = [[[UIImageView alloc] initWithFrame:frame] autorelease];
+    UIImageView *imageView = [[[UIImageView alloc] initWithFrame:frame] ah_autorelease];
     imageView.image = [image stretchableImageWithLeftCapWidth:image.size.width/2 topCapHeight:image.size.height/2];
     
     return imageView;
@@ -158,6 +159,67 @@
     UIGraphicsEndImageContext();
      
     self.image = newPic;
+}
+
+/*
+ 切换图片时加入
+    if ([self isAnimating])
+    {
+        [self stopAnimating];
+        [self setAnimationImages:nil];
+    }
+*/
+- (BOOL)animatedGIFWithData:(NSData *)data
+{
+    if (!data)
+    {
+        return NO;
+    }
+    
+    if (![data isGIF])
+    {
+        return NO;
+    }
+    
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+    
+    size_t count = CGImageSourceGetCount(source);
+    NSMutableArray *images = [NSMutableArray array];
+    
+    NSTimeInterval duration = 0.0f;
+    
+    for (size_t i = 0; i < count; i++)
+    {
+        CGImageRef image = CGImageSourceCreateImageAtIndex(source, i, NULL);
+        
+        NSDictionary *frameProperties = CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(source, i, NULL));
+        duration += [[[frameProperties objectForKey:(NSString*)kCGImagePropertyGIFDictionary] objectForKey:(NSString*)kCGImagePropertyGIFDelayTime] doubleValue];
+        
+        [images addObject:[UIImage imageWithCGImage:image scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp]];
+        
+        CGImageRelease(image);
+    }
+    
+    CFRelease(source);
+    
+    if (!duration)
+    {
+        duration = (1.0f/10.0f)*count;
+    }
+    
+    if (images.count > 0)
+    {
+        [self setImage:[images objectAtIndex:0]];
+        [self setAnimationImages:images];
+        
+        [self setAnimationDuration:duration];
+        [self setAnimationRepeatCount:0];
+        [self startAnimating];
+        
+        return YES;
+    }
+    
+    return NO;    
 }
 
 @end

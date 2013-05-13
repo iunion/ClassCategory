@@ -79,11 +79,11 @@
         if ([anObject respondsToSelector:@selector(deepMutableCopy)]) {
             anObject = [anObject deepMutableCopy];
             [newDictionary setObject:anObject forKey:aKey];
-            [anObject release];
+            [anObject ah_release];
         } else if ([anObject respondsToSelector:@selector(mutableCopyWithZone:)]) {
             anObject = [anObject mutableCopyWithZone:nil];
             [newDictionary setObject:anObject forKey:aKey];
-            [anObject release];
+            [anObject ah_release];
         } else {
 			[newDictionary setObject:anObject forKey:aKey];
 		}
@@ -130,21 +130,21 @@
 {
   NSDictionary *dictionary = (__bridge NSDictionary *)CGPointCreateDictionaryRepresentation(value);
   [self setValue:dictionary forKey:key];
-  [dictionary release]; dictionary = nil;
+  [dictionary ah_release]; dictionary = nil;
 }
 
 - (void)setSize:(CGSize)value forKey:(NSString *)key
 {
   NSDictionary *dictionary = (__bridge NSDictionary *)CGSizeCreateDictionaryRepresentation(value);
   [self setValue:dictionary forKey:key];
-  [dictionary release]; dictionary = nil;
+  [dictionary ah_release]; dictionary = nil;
 }
 
 - (void)setRect:(CGRect)value forKey:(NSString *)key
 {
   NSDictionary *dictionary = (__bridge NSDictionary *)CGRectCreateDictionaryRepresentation(value);
   [self setValue:dictionary forKey:key];
-  [dictionary release]; dictionary = nil;
+  [dictionary ah_release]; dictionary = nil;
 }
 
 @end

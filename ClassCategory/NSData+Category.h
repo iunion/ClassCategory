@@ -26,4 +26,5 @@
 
 @interface NSData (Category)
 - (NSInteger)getImageType;
+- (BOOL)isGIF;
 @end

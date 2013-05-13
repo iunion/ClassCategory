@@ -65,6 +65,17 @@
     return [self stringByDeletingLastPathComponent];
 }
 
+- (NSString *)getFullFileExtension
+{
+    NSString *extension = [self pathExtension];
+    if (![extension isEqualToString:@""])
+    {
+        extension = [NSString stringWithFormat:@".%@", extension];
+    }
+    
+    return extension;
+}
+
 /*
  sma  小图
  mid  中图
@@ -300,7 +311,7 @@
         result = [[[NSString alloc] initWithData:[NSData dataWithBytes:(const void *)bufferPtr
                                                                 length:(NSUInteger)movedBytes]
                                         encoding:NSUTF8StringEncoding]
-                  autorelease];
+                  ah_autorelease];
     }
     else
     {
@@ -633,7 +644,7 @@
 // check all links
 -(NSArray *)computeLinksWithType:(NSTextCheckingTypes)type
 {
-    NSMutableArray *checkingResultArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+    NSMutableArray *checkingResultArray = [[[NSMutableArray alloc] initWithCapacity:0] ah_autorelease];
     NSMutableArray *urlArray = nil;
 	
     if (self && (type > 0))
@@ -649,7 +660,7 @@
     
     if (checkingResultArray.count > 0)
     {
-        urlArray = [[[NSMutableArray alloc] initWithCapacity:0] autorelease];
+        urlArray = [[[NSMutableArray alloc] initWithCapacity:0] ah_autorelease];
 
         for (NSTextCheckingResult *checkingResult in checkingResultArray)
         {
@@ -729,4 +740,3 @@
 }
 
 @end
-

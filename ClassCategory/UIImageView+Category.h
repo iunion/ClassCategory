@@ -46,5 +46,7 @@
 - (void) setImage:(UIImage *)image withStringWaterMark:(NSString *)markString inRect:(CGRect)rect color:(UIColor *)color font:(UIFont *)font;
 - (void) setImage:(UIImage *)image withStringWaterMark:(NSString *)markString atPoint:(CGPoint)point color:(UIColor *)color font:(UIFont *)font;
 
+// Gif动画
+- (BOOL)animatedGIFWithData:(NSData *)data;
 
 @end

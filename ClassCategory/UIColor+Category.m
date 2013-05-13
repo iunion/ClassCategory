@@ -482,7 +482,7 @@
         [colors addObject:[UIColor colorWithHue:h2 saturation:s brightness:v alpha:a]];
     }
     
-    return [[colors copy] autorelease];
+    return [[colors copy] ah_autorelease];
 }
 
 #pragma mark String utilities

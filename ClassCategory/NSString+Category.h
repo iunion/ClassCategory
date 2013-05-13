@@ -26,6 +26,15 @@
 - (NSString *) getFileName;
 // 获取路径
 - (NSString *) getFilePath;
+/*!
+ Path extension with . or "" as before.
+ 
+ "spliff.tiff" => ".tiff"
+ "spliff" => ""
+ 
+ @result Full path extension with .
+ */
+- (NSString *) getFullFileExtension;
 // 图片完整地址
 //- (NSString *) getLogoImageName:(NSString *)addStr;
 //- (NSString *) getContentPreViewImageName;
@@ -68,4 +77,3 @@
 - (NSArray *)computeLinksWithType:(NSTextCheckingTypes)type;
 
 @end
-

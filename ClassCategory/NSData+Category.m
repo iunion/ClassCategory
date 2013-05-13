@@ -272,7 +272,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
         else characters[length++] = '=';	
     }
     
-    return [[[NSString alloc] initWithBytesNoCopy:characters length:length encoding:NSASCIIStringEncoding freeWhenDone:YES] autorelease];
+    return [[[NSString alloc] initWithBytesNoCopy:characters length:length encoding:NSASCIIStringEncoding freeWhenDone:YES] ah_autorelease];
 }
 
 @end
@@ -280,8 +280,15 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 @implementation NSData (Category)
 - (NSInteger)getImageType
 {
-    NSInteger Result;
+    NSInteger Result = 0;
+/*
     NSInteger head;
+
+     if ([image length] <= 2)
+    {
+        return SDImageType_NONE;
+    }
+    
     [self getBytes:&head range:NSMakeRange(0, 2)];
 
     head = head & 0x0000FFFF;
@@ -328,9 +335,28 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
             Result = SDImageType_NONE;
             break;
     }
-    
+*/    
     return Result;
 }
 
+- (BOOL)isGIF
+{
+    BOOL isGIF = NO;
+    
+    uint8_t c;
+    [self getBytes:&c length:1];
+    
+    switch (c)
+    {
+        case 0x47:  // probably a GIF
+            isGIF = YES;
+            break;
+            
+        default:
+            break;
+    }
+    
+    return isGIF;
+}
 @end
 
