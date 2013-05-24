@@ -9,9 +9,9 @@
 #import "AppDelegate.h"
 
 #import "MainViewController.h"
+
 //master
-//test1-1
-//test2
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
