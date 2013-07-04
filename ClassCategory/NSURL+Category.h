@@ -33,4 +33,55 @@
 - (NSString *)queryArgumentForKey:(NSString *)key;
 - (NSString *)queryArgumentForKey:(NSString *)key withDelimiter:(NSString *)delimiter;
 
+/*!
+ Decode URL string.
+ 
+ @param s String to decode
+ @result Decoded URL string
+ */
++ (NSString *)decode:(NSString *)s;
+/*!
+ Encode URL string.
+ 
+ "~!@#$%^&*(){}[]=:/,;?+'\"\\" => ~!@#$%25%5E&*()%7B%7D%5B%5D=:/,;?+'%22%5C
+ 
+ Doesn't encode: ~!@#$&*()=:/,;?+'
+ 
+ Does encode: %^{}[]"\
+ 
+ Should be the same as javascript's encodeURI().
+ See http://xkr.us/articles/javascript/encode-compare/
+ 
+ @param s String to escape
+ @result Encode string
+ */
++ (NSString *)encode:(NSString *)s;
+
+/*!
+ Encode URL string (for escaping URL key/value params).
+ 
+ "~!@#$%^&*(){}[]=:/,;?+'\"\\" => ~!%40%23%24%25%5E%26*()%7B%7D%5B%5D%3D%3A%2F%2C%3B%3F%2B'%22%5C
+ 
+ Doesn't encode: ~!*()'
+ 
+ Does encode: @#$%^&{}[]=:/,;?+"\
+ 
+ Should be the same as javascript's encodeURIComponent().
+ See http://xkr.us/articles/javascript/encode-compare/
+ 
+ @param s String to encode
+ @result Encoded string
+ */
++ (NSString *)encodeComponent:(NSString *)s;
+
+/*!
+ Encode URL string.
+ 
+ Encodes: @#$%^&{}[]=:/,;?+"\~!*()'
+ 
+ @param s String to encode
+ @result Encoded string
+ */
++ (NSString *)escapeAll:(NSString *)s;
+
 @end

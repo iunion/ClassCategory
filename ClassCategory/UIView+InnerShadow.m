@@ -3,6 +3,22 @@
 #import "UIColor+Category.h"
 #import <QuartzCore/QuartzCore.h>
 
+@implementation UIView (RoundedRect)
+
+- (void)roundedRect:(CGFloat)radius borderWidth:(CGFloat)borderWidth borderColor:(UIColor *)borderColor
+{
+    //设置那个圆角的有多圆
+    self.layer.cornerRadius = radius;
+    //设置边框的宽度，当然可以不要
+    self.layer.borderWidth = borderWidth;
+    //设置边框的颜色
+    self.layer.borderColor = [borderColor CGColor];
+    //设为NO去试试
+    self.layer.masksToBounds = YES;
+}
+
+@end
+
 @implementation UIView (InnerShadow)
 
 // sourced from http://stackoverflow.com/questions/4431292/inner-shadow-effect-on-uiview-layer
@@ -204,3 +220,24 @@
 
 
 @end
+@implementation UIView (TTUICommon)
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (UIViewController *)viewController
+{
+    for (UIView *next = [self superview]; next; next = next.superview)
+    {
+        UIResponder *nextResponder = [next nextResponder];
+        if ([nextResponder isKindOfClass:[UIViewController class]])
+        {
+            return (UIViewController *)nextResponder;
+        }
+    }
+    
+    return nil;
+}
+
+
+@end
+

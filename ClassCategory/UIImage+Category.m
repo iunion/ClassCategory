@@ -61,6 +61,30 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
 
 @implementation UIImage (wiCategory)
 
++ (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size
+{
+    // http://stackoverflow.com/questions/1213790/how-to-get-a-color-image-in-iphone-sdk
+    
+    //Create a context of the appropriate size
+    UIGraphicsBeginImageContext(size);
+    CGContextRef currentContext = UIGraphicsGetCurrentContext();
+    
+    //Build a rect of appropriate size at origin 0,0
+    CGRect fillRect = CGRectMake(0, 0, size.width, size.height);
+    
+    //Set the fill color
+    CGContextSetFillColorWithColor(currentContext, color.CGColor);
+    
+    //Fill the color
+    CGContextFillRect(currentContext, fillRect);
+    
+    //Snap the picture and close the context
+    UIImage *colorImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return colorImage;
+}
+
 // 圆角
 + (id)createRoundedRectImage:(UIImage*)image size:(CGSize)size radius:(NSInteger)r
 {
@@ -113,6 +137,32 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
     
     return img;
 }
+
++ (UIImage *)imageFromText:(NSString *)text
+{
+    UIFont *font = [UIFont systemFontOfSize:30.0];
+    CGSize size  = CGSizeMake(30.0, 30.0);
+    
+    return [self imageFromText:text font:font size:size];
+}
+
++ (UIImage *)imageFromText:(NSString *)text font:(UIFont *)font size:(CGSize)size
+{
+    //UIFont* emojiFont = [UIFont fontWithName:@"AppleColorEmoji" size:35.0];
+    if (UIGraphicsBeginImageContextWithOptions != NULL)
+    {
+        UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
+    }
+    else
+    {
+        UIGraphicsBeginImageContext(size);
+    }
+    [text drawAtPoint:CGPointMake(0.0, 0.0) withFont:font];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 
 // 裁剪图片
 - (UIImage *)imageCroppedToRect:(CGRect)rect

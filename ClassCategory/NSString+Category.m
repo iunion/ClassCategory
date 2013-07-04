@@ -10,7 +10,9 @@
 #import "GTMBase64.h"
 #import "ARCHelper.h"
 
+#import "NSURL+Category.h"
 #import "NSString+Category.h"
+//#import "Emoji.h"
 
 @implementation NSString (wiCategory)
 
@@ -739,4 +741,81 @@
     return [NSString stringWithFormat:@"%lld",size];
 }
 
+- (NSString *)getValidHeadImageUrl
+{
+    if ([self hasSuffix:@"100x100.gif"])
+    {
+        return nil;
+    }
+    
+    if ([self hasSuffix:@"50x50.gif"])
+    {
+        return nil;
+    }
+    
+    return self;
+}
+
 @end
+
+@implementation NSString (URL)
+
+
+- (NSString *)URLDecode
+{
+	return [NSURL decode:self];
+}
+
+- (NSString *)URLEncode
+{
+	return [NSURL encode:self];
+}
+
+- (NSString *)URLEncodeComponent
+{
+	return [NSURL encodeComponent:self];
+}
+
+- (NSString *)URLEscapeAll
+{
+	return [NSURL escapeAll:self];
+}
+
+/*
+- (BOOL)isAllEmojis
+{
+    NSArray *emojiArray = [Emoji allEmoji];
+    
+    __block NSMutableArray *characters = [NSMutableArray array];
+    [self enumerateSubstringsInRange:NSMakeRange(0, [self length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+        [characters addObject:substring];
+    }];
+    
+    if (![characters isNotEmpty])
+    {
+        return NO;
+    }
+    
+    for (NSString *character in characters)
+    {
+        BOOL isEmoji = NO;
+        for (NSString *emoji in emojiArray)
+        {
+            if ([emoji isEqualToString:character])
+            {
+                isEmoji = YES;
+                break;
+            }
+        }
+        
+        if (!isEmoji)
+        {
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+*/
+@end
+

@@ -149,4 +149,46 @@
     }
 }
 
+- (BOOL)isNotNSNull
+{
+	return ![self isKindOfClass:[NSNull class]];
+}
+
+- (BOOL)isNotEmpty
+{
+    return !(self == nil
+             || [self isKindOfClass:[NSNull class]]
+             || ([self respondsToSelector:@selector(length)]
+                 && [(NSData *)self length] == 0)
+             || ([self respondsToSelector:@selector(count)]
+                 && [(NSArray *)self count] == 0));
+}
+
 @end
+
+/*
+@implementation UIResponder(UIResponderInsertTextAdditions)
+
+- (void)insertText:(NSString*)text
+{
+    // 获取系统剪贴板
+    UIPasteboard* generalPasteboard= [UIPasteboard generalPasteboard];
+    
+    // 保存系统剪贴板内容，以便最后能恢复它们
+    NSArray *items =generalPasteboard.items;
+    
+    //修改系统剪贴板的内容为要插入的文本
+    generalPasteboard.string = text;
+    
+    // 告诉responder从系统剪贴板粘贴文本到当前光标位置
+    [self paste: self];
+    
+    // 恢复系统剪贴板原有的内容
+    generalPasteboard.items = items;
+    
+    // 释放临时数组items
+    [items ah_release];
+}
+
+@end
+*/

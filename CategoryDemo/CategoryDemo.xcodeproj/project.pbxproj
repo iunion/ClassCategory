@@ -25,7 +25,7 @@
 		0414E0D31713A9E100B7A4C5 /* NSDictionary+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0BE1713A9E100B7A4C5 /* NSDictionary+Category.m */; };
 		0414E0D41713A9E100B7A4C5 /* NSObject+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0C01713A9E100B7A4C5 /* NSObject+Category.m */; };
 		0414E0D51713A9E100B7A4C5 /* NSString+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0C21713A9E100B7A4C5 /* NSString+Category.m */; };
-		0414E0D61713A9E100B7A4C5 /* NSURL+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0C41713A9E100B7A4C5 /* NSURL+Category.m */; };
+		0414E0D61713A9E100B7A4C5 /* NSURL+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0C41713A9E100B7A4C5 /* NSURL+Category.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		0414E0D71713A9E100B7A4C5 /* UIColor+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0C61713A9E100B7A4C5 /* UIColor+Category.m */; };
 		0414E0D81713A9E100B7A4C5 /* UIImage+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0C81713A9E100B7A4C5 /* UIImage+Category.m */; };
 		0414E0D91713A9E100B7A4C5 /* UIImageView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 0414E0CA1713A9E100B7A4C5 /* UIImageView+Category.m */; };

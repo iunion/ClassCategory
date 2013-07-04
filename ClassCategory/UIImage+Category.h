@@ -35,9 +35,15 @@
 
 @interface UIImage (wiCategory)
 
++ (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size;
+
 // 圆角
 + (id)createRoundedRectImage:(UIImage*)image size:(CGSize)size radius:(NSInteger)r;
 + (id)createRoundedRectImage:(UIImage*)image radius:(NSInteger)r;
+
+// 文字转为图片
++ (UIImage *)imageFromText:(NSString *)text;
++ (UIImage *)imageFromText:(NSString *)text font:(UIFont *)font size:(CGSize)size;
 
 // 缩放尺寸最终大小是newSize
 + (UIImage*)imageWithImage:(UIImage*)image scaledToSize:(CGSize)newSize;

@@ -3,6 +3,7 @@
 
 @interface NSDictionary (wiCategory)
 
+- (long long)longForKey:(NSString *)key;
 - (NSInteger)intForKey:(NSString *)key;
 - (BOOL)boolForKey:(NSString *)key;
 - (float)floatForKey:(NSString *)key;

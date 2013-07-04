@@ -48,7 +48,7 @@
 
 - (void)centerVerticallyInRect:(CGRect)rect left:(CGFloat)left
 {
-    [self setCenter:CGPointMake(left + ((int)floorf([self width]) % 2 ? .5 : 0), floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
+    [self setCenter:CGPointMake(left + [self center].x, floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
 }
 
 - (void)centerHorizontallyInRect:(CGRect)rect
@@ -130,6 +130,11 @@
 
 - (NSInteger)subviewIndex
 {
+    if (self.superview == nil)
+    {
+        return NSNotFound;
+    }
+    
     return [self.superview.subviews indexOfObject:self];
 }
 

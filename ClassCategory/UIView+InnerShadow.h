@@ -1,4 +1,9 @@
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
+
+@interface UIView (RoundedRect)
+- (void)roundedRect:(CGFloat)radius borderWidth:(CGFloat)borderWidth borderColor:(UIColor *)borderColor;
+@end
 
 @interface UIView (InnerShadow)
 
@@ -20,5 +25,14 @@
 - (void) addGrayGradientShadowWithColor:(UIColor *)color;
 
 -(void) addMovingShadow;
+
+@end
+
+@interface UIView (TTUICommon)
+
+/**
+ * The view controller whose view contains this view.
+ */
+- (UIViewController *)viewController;
 
 @end

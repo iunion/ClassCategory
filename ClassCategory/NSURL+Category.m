@@ -44,4 +44,28 @@
 	return [self queryArgumentForKey:key withDelimiter:delimiter];
 }
 
++ (NSString *)decode:(NSString *)s
+{
+	if (!s) return nil;
+	return [NSMakeCollectable(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)s, CFSTR(""))) autorelease];
+}
+
++ (NSString *)encode:(NSString *)s
+{
+	// Characters to maybe leave unescaped? CFSTR("~!@#$&*()=:/,;?+'")
+	return [NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)s, CFSTR("#"), CFSTR("%^{}[]\"\\"), kCFStringEncodingUTF8)) autorelease];
+}
+
++ (NSString *)encodeComponent:(NSString *)s
+{
+	// Characters to maybe leave unescaped? CFSTR("~!*()'")
+    return [NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)s, NULL, CFSTR("@#$%^&{}[]=:/,;?+\"\\"), kCFStringEncodingUTF8)) autorelease];
+}
+
++ (NSString *)escapeAll:(NSString *)s
+{
+	// Characters to escape: @#$%^&{}[]=:/,;?+"\~!*()'
+    return [NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)s, NULL, CFSTR("@#$%^&{}[]=:/,;?+\"\\~!*()'"), kCFStringEncodingUTF8)) autorelease];
+}
+
 @end
