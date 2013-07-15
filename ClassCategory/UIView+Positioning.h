@@ -32,6 +32,7 @@
 
 - (void)centerInRect:(CGRect)rect;
 - (void)centerInRect:(CGRect)rect leftOffset:(CGFloat)left;
+- (void)centerInRect:(CGRect)rect topOffset:(CGFloat)top;
 - (void)centerVerticallyInRect:(CGRect)rect;
 - (void)centerVerticallyInRect:(CGRect)rect left:(CGFloat)left;
 - (void)centerHorizontallyInRect:(CGRect)rect;
@@ -39,6 +40,7 @@
 
 - (void)centerInSuperView;
 - (void)centerInSuperViewWithLeftOffset:(CGFloat)left;
+- (void)centerInSuperViewWithTopOffset:(CGFloat)top;
 - (void)centerVerticallyInSuperView;
 - (void)centerVerticallyInSuperViewWithLeft:(CGFloat)left;
 - (void)centerHorizontallyInSuperView;

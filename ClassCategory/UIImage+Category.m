@@ -206,7 +206,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
         y = 0;
 
         width = size.width*scale;
-        height = self.size.width;
+        height = self.size.height;
     }
     
 	return [self imageCroppedToRect:CGRectMake(x, y, width, height)];
@@ -229,7 +229,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
         CGFloat scale = size.height/self.size.height;
 
         width = self.size.width*scale;
-        height = self.size.width*scale;
+        height = self.size.height*scale;
     }
 
 	return [self resizeImage:CGRectMake(0, 0, width, height)];
@@ -319,39 +319,45 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
     return newPic;
 }
 
-- (void) drawInRect:(CGRect)rect withImageMask:(UIImage*)mask
+// 蒙板
+- (UIImage *) imageWithColor:(UIColor*)color inRect:(CGRect)rect
 {
-     CGContextRef context = UIGraphicsGetCurrentContext();
-     
-     CGContextSaveGState(context);
-     
-     CGContextTranslateCTM(context, 0.0, rect.size.height);
-     CGContextScaleCTM(context, 1.0, -1.0);
-     
-     rect.origin.y = rect.origin.y * -1;
-     
-     CGContextClipToMask(context, rect, mask.CGImage);
-     CGContextDrawImage(context,rect,self.CGImage);
-     
-     CGContextRestoreGState(context);
+    return  [self imageWithWaterMask:[UIImage imageWithColor:color size:rect.size] inRect:rect];
 }
 
-- (void) drawMaskedColorInRect:(CGRect)rect withColor:(UIColor*)color
-{
-	CGContextRef context = UIGraphicsGetCurrentContext();
-	CGContextSaveGState(context);
-
-	CGContextSetFillColorWithColor(context, color.CGColor);
-	
-	CGContextTranslateCTM(context, 0.0, rect.size.height);
-	CGContextScaleCTM(context, 1.0, -1.0);
-	rect.origin.y = rect.origin.y * -1;
-	
-	CGContextClipToMask(context, rect, self.CGImage);
-	CGContextFillRect(context, rect);
-	
-	CGContextRestoreGState(context);
-}
+//- (void) drawInRect:(CGRect)rect withImageMask:(UIImage*)mask
+//{
+//     CGContextRef context = UIGraphicsGetCurrentContext();
+//     
+//     CGContextSaveGState(context);
+//     
+//     CGContextTranslateCTM(context, 0.0, rect.size.height);
+//     CGContextScaleCTM(context, 1.0, -1.0);
+//     
+//     rect.origin.y = rect.origin.y * -1;
+//     
+//     CGContextClipToMask(context, rect, mask.CGImage);
+//     CGContextDrawImage(context,rect,self.CGImage);
+//     
+//     CGContextRestoreGState(context);
+//}
+//
+//- (void) drawMaskedColorInRect:(CGRect)rect withColor:(UIColor*)color
+//{
+//	CGContextRef context = UIGraphicsGetCurrentContext();
+//	CGContextSaveGState(context);
+//
+//	CGContextSetFillColorWithColor(context, color.CGColor);
+//	
+//	CGContextTranslateCTM(context, 0.0, rect.size.height);
+//	CGContextScaleCTM(context, 1.0, -1.0);
+//	rect.origin.y = rect.origin.y * -1;
+//	
+//	CGContextClipToMask(context, rect, self.CGImage);
+//	CGContextFillRect(context, rect);
+//	
+//	CGContextRestoreGState(context);
+//}
 
 - (BOOL) writeImageToFileAtPath:(NSString*)aPath
 {

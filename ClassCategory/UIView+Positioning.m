@@ -41,6 +41,11 @@
     [self setCenter:CGPointMake(left + floorf(CGRectGetMidX(rect)) + ((int)floorf([self width]) % 2 ? .5 : 0) , floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
 }
 
+- (void)centerInRect:(CGRect)rect topOffset:(CGFloat)top
+{
+    [self setCenter:CGPointMake(floorf(CGRectGetMidX(rect)) + ((int)floorf([self width]) % 2 ? .5 : 0) , top + floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
+}
+
 - (void)centerVerticallyInRect:(CGRect)rect
 {
     [self setCenter:CGPointMake([self center].x, floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
@@ -48,7 +53,10 @@
 
 - (void)centerVerticallyInRect:(CGRect)rect left:(CGFloat)left
 {
-    [self setCenter:CGPointMake(left + [self center].x, floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
+//    [self setCenter:CGPointMake(left + [self center].x, floorf(CGRectGetMidY(rect)) + ((int)floorf([self height]) % 2 ? .5 : 0))];
+    
+    [self centerVerticallyInRect:rect];
+    self.left = left;
 }
 
 - (void)centerHorizontallyInRect:(CGRect)rect
@@ -58,7 +66,10 @@
 
 - (void)centerHorizontallyInRect:(CGRect)rect top:(CGFloat)top
 {
-    [self setCenter:CGPointMake(floorf(CGRectGetMidX(rect)) + ((int)floorf([self width]) % 2 ? .5 : 0), top + ((int)floorf([self height]) % 2 ? .5 : 0))];
+//    [self setCenter:CGPointMake(floorf(CGRectGetMidX(rect)) + ((int)floorf([self width]) % 2 ? .5 : 0), top + ((int)floorf([self height]) % 2 ? .5 : 0))];
+    
+    [self centerHorizontallyInRect:rect];
+    self.top = top;
 }
 
 - (void)centerInSuperView
@@ -69,6 +80,11 @@
 - (void)centerInSuperViewWithLeftOffset:(CGFloat)left
 {
     [self centerInRect:[[self superview] bounds] leftOffset:left];
+}
+
+- (void)centerInSuperViewWithTopOffset:(CGFloat)top
+{
+    [self centerInRect:[[self superview] bounds] topOffset:top];
 }
 
 - (void)centerVerticallyInSuperView

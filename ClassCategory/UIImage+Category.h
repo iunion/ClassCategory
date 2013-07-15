@@ -37,8 +37,9 @@
 
 + (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size;
 
-// 圆角
+// 图片先压缩到size大小然后再做圆角大小为r，然后在view上圆角与图片可能被等比拉伸/缩放
 + (id)createRoundedRectImage:(UIImage*)image size:(CGSize)size radius:(NSInteger)r;
+// 先在原图做r大的圆角，然后在view上圆角与图片可能被等比拉伸/缩放
 + (id)createRoundedRectImage:(UIImage*)image radius:(NSInteger)r;
 
 // 文字转为图片
@@ -65,8 +66,9 @@
 
 
 // 蒙板
-- (void) drawInRect:(CGRect)rect withImageMask:(UIImage*)mask;
-- (void) drawMaskedColorInRect:(CGRect)rect withColor:(UIColor*)color;
+- (UIImage *) imageWithColor:(UIColor*)color inRect:(CGRect)rect;
+//- (void) drawInRect:(CGRect)rect withImageMask:(UIImage *)mask;
+//- (void) drawMaskedColorInRect:(CGRect)rect withColor:(UIColor*)color;
 
 // 保存图像文件
 - (BOOL) writeImageToFileAtPath:(NSString*)aPath;
