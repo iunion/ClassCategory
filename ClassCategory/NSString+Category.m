@@ -67,6 +67,29 @@
     return [self stringByDeletingLastPathComponent];
 }
 
++ (NSString *)storeString:(NSInteger)bsize
+{
+    if (bsize < 1024)
+    {
+        return [NSString stringWithFormat:@"%dB", bsize];
+    }
+    else if (bsize < 1024*1024)
+    {
+        CGFloat kbsize = (CGFloat)bsize / 1024;
+        return [NSString stringWithFormat:@"%0.2fKB", kbsize];
+    }
+    else if (bsize < 1024*1024*1024)
+    {
+        CGFloat kbsize = (CGFloat)bsize / (1024*1024);
+        return [NSString stringWithFormat:@"%0.2fM", kbsize];
+    }
+    else
+    {
+        CGFloat kbsize = (CGFloat)bsize / (1024*1024*1024);
+        return [NSString stringWithFormat:@"%0.2fG", kbsize];
+    }
+}
+
 - (NSString *)getFullFileExtension
 {
     NSString *extension = [self pathExtension];
@@ -76,6 +99,18 @@
     }
     
     return extension;
+}
+
+- (NSString *)escapeHTML
+{
+    NSMutableString *result = [[NSMutableString alloc] initWithString:self];
+    
+    [result replaceOccurrencesOfString:@"&" withString:@"&amp;" options:NSLiteralSearch range:NSMakeRange(0, [result length])];
+    [result replaceOccurrencesOfString:@"<" withString:@"&lt;" options:NSLiteralSearch range:NSMakeRange(0, [result length])];
+    [result replaceOccurrencesOfString:@">" withString:@"&gt;" options:NSLiteralSearch range:NSMakeRange(0, [result length])];
+    [result replaceOccurrencesOfString:@"\"" withString:@"&quot;" options:NSLiteralSearch range:NSMakeRange(0, [result length])];
+    [result replaceOccurrencesOfString:@"'" withString:@"&#39;" options:NSLiteralSearch range:NSMakeRange(0, [result length])];
+    return result;
 }
 
 /*
@@ -246,6 +281,15 @@
     return [string1 substringToIndex:[string1 length]-1];
 }
 
+- (NSString *)trim
+{
+    return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
+- (NSString *)trimSpace
+{
+    return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
 
 + (NSString*) TripleDES:(NSString*)plainText encryptOrDecrypt:(CCOperation)encryptOrDecrypt key:(NSString*)key
 {
@@ -374,6 +418,7 @@
     
     return [scan scanFloat:&val] && [scan isAtEnd];
 }
+
 
 #define WI_IMAGE_PARSER_LENGTH  4
 
@@ -752,7 +797,10 @@
     {
         return nil;
     }
-    
+    if ([self isEqualToString:@""])
+    {
+        return nil;
+    }
     return self;
 }
 
@@ -781,41 +829,197 @@
 	return [NSURL escapeAll:self];
 }
 
-/*
+@end
+
+
+@implementation NSString (Emoji)
+
 - (BOOL)isAllEmojis
 {
-    NSArray *emojiArray = [Emoji allEmoji];
+    __block BOOL returnValue = YES;
     
-    __block NSMutableArray *characters = [NSMutableArray array];
-    [self enumerateSubstringsInRange:NSMakeRange(0, [self length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
-        [characters addObject:substring];
+    [self enumerateSubstringsInRange:NSMakeRange(0, [self length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)
+     {
+    
+         if (![substring isEmoji])
+         {
+             returnValue = NO;
+             *stop = YES;
+         }
+         
     }];
+
+    return returnValue;
+}
     
-    if (![characters isNotEmpty])
+// 是否有表情
+- (BOOL)isContainsEmojis
+{
+    __block BOOL returnValue = NO;
+    [self enumerateSubstringsInRange:NSMakeRange(0, [self length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:
+     ^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)
+     {
+         
+         if ([substring isEmoji])
+         {
+             returnValue = YES;
+             *stop = YES;
+         }
+         
+     }];
+    
+    return returnValue;
+}
+
+- (BOOL)isEmoji
+{
+    if (![self isNotEmpty])
+    {
+        return NO;
+    }
+    if (self.length > 2)
     {
         return NO;
     }
     
-    for (NSString *character in characters)
+    const unichar hs = [self characterAtIndex:0];
+    
+    if (0xd800 <= hs && hs <= 0xdbff)
     {
-        BOOL isEmoji = NO;
-        for (NSString *emoji in emojiArray)
+        if (self.length > 1)
         {
-            if ([emoji isEqualToString:character])
+            const unichar ls = [self characterAtIndex:1];
+            const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
+            if (0x1d000 <= uc && uc <= 0x1f77f)
             {
-                isEmoji = YES;
-                break;
+                return YES;
             }
         }
-        
-        if (!isEmoji)
+    }
+    else if (self.length > 1)
+    {
+        const unichar ls = [self characterAtIndex:1];
+        if (ls == 0x20e3)
         {
-            return NO;
+            return YES;
         }
     }
-    
-    return YES;
+    else
+    {
+        if (0x2100 <= hs && hs <= 0x27ff)
+        {
+            return YES;
+        }
+        else if (0x2B05 <= hs && hs <= 0x2b07)
+        {
+            return YES;
+        }
+        else if (0x2934 <= hs && hs <= 0x2935)
+        {
+            return YES;
+        }
+        else if (0x3297 <= hs && hs <= 0x3299)
+        {
+            return YES;
+        }
+        else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50)
+        {
+            return YES;
+        }
+    }
+
+    return NO;
 }
-*/
+
+- (NSArray *)disassembleEmojis
+{
+    __block NSMutableString *string = [[[NSMutableString alloc] init] ah_autorelease];
+    __block NSMutableArray *strArray = [[[NSMutableArray alloc] initWithCapacity:0] ah_autorelease];
+    [self enumerateSubstringsInRange:NSMakeRange(0, [self length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:
+     ^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)
+     {
+         
+         if ([substring isEmoji])
+         {
+             NSDictionary *strDic = nil;
+             NSDictionary *emojiDic = nil;
+             
+             if ([string isNotEmpty])
+             {
+                 strDic = [[[NSDictionary alloc] initWithObjectsAndKeys:string, @"text", @"text", @"tag", nil] ah_autorelease];
+                 [strArray addObject:strDic];
+                 string = [[[NSMutableString alloc] init] ah_autorelease];
+             }
+             
+             emojiDic = [[[NSDictionary alloc] initWithObjectsAndKeys:substring, @"text", @"emoji", @"tag", nil] ah_autorelease];
+             [strArray addObject:emojiDic];
+         }
+         else
+         {
+             [string appendString:substring];
+         }
+         
+     }];
+
+    if ([string isNotEmpty])
+    {
+        NSDictionary *strDic = nil;
+        strDic = [[[NSDictionary alloc] initWithObjectsAndKeys:string, @"text", @"text", @"tag", nil] ah_autorelease];
+        [strArray addObject:strDic];
+    }
+    
+    return strArray;
+}
+
+
+- (NSString *)parameterEmojis
+{
+    __block NSMutableString *string = [[[NSMutableString alloc] init] ah_autorelease];
+    __block NSMutableString *subText = [[[NSMutableString alloc] init] ah_autorelease];
+    NSString *allText = nil;
+    
+    [self enumerateSubstringsInRange:NSMakeRange(0, [self length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:
+     ^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop)
+     {
+         
+         if ([substring isEmoji])
+         {
+             if (string.length > 0)
+             {
+                 [string appendString:@","];
+             }
+             
+             if ([subText isNotEmpty])
+             {
+                 NSString *str = [NSString stringWithFormat:@"{\"tag\":\"text\",\"text\":\"%@\"},", subText];
+                 [string appendString:str];
+                 subText = [[[NSMutableString alloc] init] ah_autorelease];
+             }
+             
+             NSString *str = [NSString stringWithFormat:@"{\"tag\":\"emoji\",\"text\":\"%@\"}", substring];
+             [string appendString:str];
+         }
+         else
+         {
+             [subText appendString:substring];
+         }
+         
+     }];
+
+    if ([subText isNotEmpty])
+    {
+        if (string.length > 0)
+        {
+            [string appendString:@","];
+        }
+        
+        NSString *str = [NSString stringWithFormat:@"{\"tag\":\"text\",\"text\":\"%@\"}", subText];
+        [string appendString:str];
+    }
+
+    allText = [NSString stringWithFormat:@"[%@]", string];
+    return allText;
+}
+
 @end
 

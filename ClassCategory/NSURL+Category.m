@@ -68,4 +68,27 @@
     return [NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)s, NULL, CFSTR("@#$%^&{}[]=:/,;?+\"\\~!*()'"), kCFStringEncodingUTF8)) autorelease];
 }
 
+- (NSMutableURLRequest *)addHTTPRequestHeaderInfo
+{
+    if (!self)
+    {
+        return nil;
+    }
+    
+    NSMutableURLRequest *mutableRequest = [[[NSMutableURLRequest alloc] initWithURL:self] autorelease];
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *versionNum = [infoDict stringForKey:@"CFBundleVersion"];
+    NSString *appName = [infoDict stringForKey:@"CFBundleExecutable"];
+    
+    [mutableRequest addValue:appName forHTTPHeaderField:@"babytree-app-id"];
+    [mutableRequest addValue:@"ios" forHTTPHeaderField:@"babytree-client-type"];
+    [mutableRequest addValue:versionNum forHTTPHeaderField:@"babytree-app-version"];
+    
+    NSLog(@"%@", mutableRequest.allHTTPHeaderFields);
+    
+    return mutableRequest;
+}
+
+
 @end

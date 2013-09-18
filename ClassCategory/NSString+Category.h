@@ -15,6 +15,9 @@
 + (NSString *) stringTrimStart:(NSString *)str;
 + (NSString *) string:(NSString *)str appendRandom:(NSInteger)ram;
 
+- (NSString *)trim;
+- (NSString *)trimSpace;
+
 + (NSString *)getCGFormattedFileSize:(long long)size;
 
 // 过滤头像Url
@@ -28,6 +31,10 @@
 - (NSString *) getFileName;
 // 获取路径
 - (NSString *) getFilePath;
+
+// 从bit转化为KB、MB、GB
++ (NSString *)storeString:(NSInteger)bsize;
+
 /*!
  Path extension with . or "" as before.
  
@@ -77,6 +84,8 @@
 - (NSURL*)extendedURLWithType:(NSTextCheckingTypes)type;
 
 - (NSArray *)computeLinksWithType:(NSTextCheckingTypes)type;
+
+- (NSString *)escapeHTML;
 
 @end
 
@@ -133,7 +142,23 @@
  */
 - (NSString *)URLEscapeAll;
 
-//- (BOOL)isAllEmojis;
+
+@end
+
+
+@interface NSString (Emoji)
+
+// 是否全是表情
+- (BOOL)isAllEmojis;
+
+// 是否有表情
+- (BOOL)isContainsEmojis;
+
+// 是否表情，只对一个字符
+- (BOOL)isEmoji;
+
+- (NSArray *)disassembleEmojis;
+- (NSString *)parameterEmojis;
 
 @end
 

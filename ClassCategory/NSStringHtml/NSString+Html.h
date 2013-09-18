@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+// 其中MATCH_STRING中()内的内容，按顺序对应REPLACE_STRING中的$1,$2 ...
+// 参见pdf的P21
+
 //#define NSSTRINGCHECKINGHTML_LINK_MATCH_STRING          @"(http://o1.cn/[a-zA-Z0-9]+)"
 #define NSSTRINGCHECKINGHTML_LINK_MATCH_STRING          @"(http://o1.cn/[a-zA-Z0-9]+/[a-zA-Z0-9]+)"
 #define NSSTRINGCHECKINGHTML_LINK_REPLACE_STRING        @"<a href=\"$1\" target=\"_blank\">$1</a>"

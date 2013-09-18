@@ -149,6 +149,11 @@
     }
 }
 
+- (BOOL)isValided
+{
+    return !(self == nil || [self isKindOfClass:[NSNull class]]);
+}
+
 - (BOOL)isNotNSNull
 {
 	return ![self isKindOfClass:[NSNull class]];

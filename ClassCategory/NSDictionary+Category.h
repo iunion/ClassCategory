@@ -7,11 +7,16 @@
 - (NSInteger)intForKey:(NSString *)key;
 - (BOOL)boolForKey:(NSString *)key;
 - (float)floatForKey:(NSString *)key;
+- (double)doubleForKey:(NSString *)key;
 - (NSString *)stringForKey:(NSString *)key;
+- (NSString *)stringForKey:(NSString *)key defaultString:(NSString *)defaultString;
 
 - (CGPoint)pointForKey:(NSString *)key;
 - (CGSize)sizeForKey:(NSString *)key;
 - (CGRect)rectForKey:(NSString *)key;
+
+- (NSArray *)arrayForKey:(NSString *)key;
+- (NSDictionary *)dictionaryForKey:(NSString *)key;
 
 @end
 

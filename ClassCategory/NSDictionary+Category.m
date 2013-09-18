@@ -7,9 +7,10 @@
 {
     long long value = 0;
     
-    if ([[self objectForKey:key] isNotEmpty])
+    id object = [self objectForKey:key];
+    if ([object isValided] && ([object isKindOfClass:[NSValue class]] || [object isKindOfClass:[NSString class]]))
     {
-        value = [[self objectForKey:key] longLongValue];
+        value = [object longLongValue];
     }
     
     return value;
@@ -19,9 +20,10 @@
 {
     NSInteger value = 0;
     
-    if ([[self objectForKey:key] isNotEmpty])
+    id object = [self objectForKey:key];
+    if ([object isValided] && ([object isKindOfClass:[NSValue class]] || [object isKindOfClass:[NSString class]]))
     {
-        value = [[self objectForKey:key] integerValue];
+        value = [object integerValue];
     }
     
     return value;
@@ -31,9 +33,10 @@
 {
     BOOL value = NO;
     
-    if ([[self objectForKey:key] isNotEmpty])
+    id object = [self objectForKey:key];
+    if ([object isValided] && ([object isKindOfClass:[NSValue class]] || [object isKindOfClass:[NSString class]]))
     {
-        value = [[self objectForKey:key] boolValue];
+        value = [object boolValue];
     }
     
     return value;
@@ -42,9 +45,24 @@
 - (float)floatForKey:(NSString *)key
 {
     float value = 0.0f;
-    if ([[self objectForKey:key] isNotEmpty])
+    
+    id object = [self objectForKey:key];
+    if ([object isValided] && ([object isKindOfClass:[NSValue class]] || [object isKindOfClass:[NSString class]]))
     {
-        value = [[self objectForKey:key] floatValue];
+        value = [object floatValue];
+    }
+    
+    return value;
+}
+
+- (double)doubleForKey:(NSString *)key
+{
+    double value = 0.0f;
+    
+    id object = [self objectForKey:key];
+    if ([object isValided] && ([object isKindOfClass:[NSValue class]] || [object isKindOfClass:[NSString class]]))
+    {
+        value = [object doubleValue];
     }
     
     return value;
@@ -53,9 +71,27 @@
 - (NSString *)stringForKey:(NSString *)key
 {
     NSString *value = nil;
-    if ([[self objectForKey:key] isNotEmpty])
+    
+    id object = [self objectForKey:key];
+    if ([object isValided] && [object isKindOfClass:[NSString class]])
     {
-        value = [self objectForKey:key];
+        value = object;
+    }
+    else if([object isValided] && [object isKindOfClass:[NSNumber class]])
+    {
+        value = [object stringValue];
+    }
+    
+    return value;
+}
+
+- (NSString *)stringForKey:(NSString *)key defaultString:(NSString *)defaultString
+{
+    NSString *value = [self stringForKey:key];
+    
+    if (!value)
+    {
+        return defaultString;
     }
     
     return value;
@@ -66,7 +102,7 @@
     CGPoint point = CGPointZero;
     NSDictionary *dictionary = [self valueForKey:key];
     
-    if ([dictionary isNotEmpty])
+    if ([dictionary isValided] && [dictionary isKindOfClass:[NSDictionary class]])
     {
         BOOL success = CGPointMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)dictionary, &point);
         if (success)
@@ -83,7 +119,7 @@
   CGSize size = CGSizeZero;
   NSDictionary *dictionary = [self valueForKey:key];
     
-    if ([dictionary isNotEmpty])
+    if ([dictionary isValided] && [dictionary isKindOfClass:[NSDictionary class]])
     {
   BOOL success = CGSizeMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)dictionary, &size);
         if (success)
@@ -100,7 +136,7 @@
     CGRect rect = CGRectZero;
     NSDictionary *dictionary = [self valueForKey:key];
     
-    if ([dictionary isNotEmpty])
+    if ([dictionary isValided] && [dictionary isKindOfClass:[NSDictionary class]])
     {
         BOOL success = CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)dictionary, &rect);
         if (success)
@@ -110,6 +146,32 @@
     }
     
     return CGRectZero;
+}
+
+- (NSArray *)arrayForKey:(NSString *)key
+{
+    NSArray *value = nil;
+    
+    id object = [self objectForKey:key];
+    if ([object isValided] && [object isKindOfClass:[NSArray class]])
+    {
+        value = object;
+    }
+    
+    return value;
+}
+
+- (NSDictionary *)dictionaryForKey:(NSString *)key
+{
+    NSDictionary *value = nil;
+    
+    id object = [self objectForKey:key];
+    if ([object isValided] && [object isKindOfClass:[NSDictionary class]])
+    {
+        value = object;
+    }
+    
+    return value;
 }
 
 @end

@@ -136,6 +136,7 @@
     // 表情处理开始
     if (checkingType & NSStringCheckingHtmlTypeEmoji)
     {
+        // 资源路径/emoji
         NSString *emotDir = [NSString stringWithFormat:@"%@/emoji",[[NSBundle mainBundle] resourcePath]];
         NSFileManager *fileManager = [NSFileManager defaultManager];
         

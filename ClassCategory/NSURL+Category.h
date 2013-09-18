@@ -84,4 +84,7 @@
  */
 + (NSString *)escapeAll:(NSString *)s;
 
+
+- (NSMutableURLRequest *)addHTTPRequestHeaderInfo;
+
 @end
