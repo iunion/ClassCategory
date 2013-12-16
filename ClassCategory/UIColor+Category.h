@@ -81,3 +81,42 @@
 + (void) red:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b toHue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)v;
 
 @end
+
+
+@interface UIColor (FlatColors)
+
++ (UIColor *)flatRedColor;
++ (UIColor *)flatDarkRedColor;
+
++ (UIColor *)flatGreenColor;
++ (UIColor *)flatDarkGreenColor;
+
++ (UIColor *)flatBlueColor;
++ (UIColor *)flatDarkBlueColor;
+
++ (UIColor *)flatTealColor;
++ (UIColor *)flatDarkTealColor;
+
++ (UIColor *)flatPurpleColor;
++ (UIColor *)flatDarkPurpleColor;
+
++ (UIColor *)flatBlackColor;
++ (UIColor *)flatDarkBlackColor;
+
++ (UIColor *)flatYellowColor;
++ (UIColor *)flatDarkYellowColor;
+
++ (UIColor *)flatOrangeColor;
++ (UIColor *)flatDarkOrangeColor;
+
++ (UIColor *)flatWhiteColor;
++ (UIColor *)flatDarkWhiteColor;
+
++ (UIColor *)flatGrayColor;
++ (UIColor *)flatDarkGrayColor;
+
++ (UIColor *)randomFlatColor;
++ (UIColor *)randomFlatLightColor;
++ (UIColor *)randomFlatDarkColor;
+
+@end

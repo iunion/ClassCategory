@@ -3,6 +3,10 @@
 #import "UIColor+Category.h"
 #import <QuartzCore/QuartzCore.h>
 
+
+#pragma mark -
+#pragma mark UIView + RoundedRect
+
 @implementation UIView (RoundedRect)
 
 - (void)roundedRect:(CGFloat)radius borderWidth:(CGFloat)borderWidth borderColor:(UIColor *)borderColor
@@ -18,6 +22,10 @@
 }
 
 @end
+
+
+#pragma mark -
+#pragma mark UIView + InnerShadow
 
 @implementation UIView (InnerShadow)
 
@@ -82,6 +90,9 @@
 
 @end
 
+
+#pragma mark -
+#pragma mark UIView + Shadow
 
 @implementation UIView (Shadow)
 
@@ -221,24 +232,38 @@
 
 @end
 
-@implementation UIView (TTUICommon)
 
+#pragma mark - UIView + Screenshot
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-- (UIViewController *)viewController
+@implementation UIView (Screenshot)
+
+- (UIImage *)screenshot
 {
-    for (UIView *next = [self superview]; next; next = next.superview)
-    {
-        UIResponder *nextResponder = [next nextResponder];
-        if ([nextResponder isKindOfClass:[UIViewController class]])
-        {
-            return (UIViewController *)nextResponder;
-        }
-    }
-    
-    return nil;
+    return [self screenshotWithRect:self.bounds];
 }
 
+- (UIImage *)screenshotWithRect:(CGRect)rect;
+{
+    UIGraphicsBeginImageContext(rect.size);
+#if (__IPHONE_7_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0)
+    if( [self respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)])
+    {
+        [self drawViewHierarchyInRect:rect afterScreenUpdates:YES];
+    }
+    else
+#endif
+    {
+        [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    }
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // hack, helps w/ our colors when blurring
+    NSData *imageData = UIImageJPEGRepresentation(image, 1); // convert to jpeg
+    image = [UIImage imageWithData:imageData];
+    
+    return image;
+}
 
 @end
 

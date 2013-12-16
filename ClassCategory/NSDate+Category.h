@@ -15,6 +15,11 @@
 
 @interface NSDate (wiCategory)
 
++ (NSString *)stringFromDate:(NSDate *)aDate;
++ (NSString *)stringFromNow;
++ (NSString *)hmStringDateFromDate:(NSDate *)aDate;
+
+
 + (NSDate *) getCurrentDateWithSystemTimeZone;
 + (NSDate *) getCurrentDateWithTimeZone:(NSTimeZone *)timezone;
 

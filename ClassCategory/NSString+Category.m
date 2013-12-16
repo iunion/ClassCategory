@@ -219,7 +219,7 @@
 // 校验手机号
 - (BOOL) isPhoneNum
 {
-    if ([self isEqualToString:@""])
+    if (![self isNotEmpty])
         return NO;
     
     if (self.length != 11)
@@ -236,6 +236,35 @@
 
     NSLog(@"%@ is inValid mobil Number", self);  
     return NO;
+}
+
+// 一个汉字当两个字符 长度的计算
+- (int)lengthByUnicode
+{
+    int i, n=[self length], l=0, a=0, b=0;
+    unichar c;
+    
+    for(i=0; i<n; i++)
+    {
+        c = [self characterAtIndex:i];
+        if (isblank(c))
+        {
+            b++;
+        }
+        else if (isascii(c))
+        {
+            a++;
+        }
+        else
+        {
+            l++;
+        }
+    }
+    
+    if (a==0 && l==0)
+        return 0;
+    
+    return a+b+2*l;
 }
 
 // 校验验证码  
@@ -834,6 +863,20 @@
 
 @implementation NSString (Emoji)
 
+- (BOOL)isAllEmojisAndSpace
+{
+    NSArray *array = [self componentsSeparatedByCharactersInSet:
+                      [NSCharacterSet whitespaceCharacterSet]];
+    
+    NSMutableString *output = [[[NSMutableString alloc] initWithCapacity:0] ah_autorelease];
+    for(NSString *word in array)
+    {
+        [output appendString:word];
+    }
+    
+    return [output isAllEmojis];
+}
+
 - (BOOL)isAllEmojis
 {
     __block BOOL returnValue = YES;
@@ -1001,6 +1044,14 @@
          }
          else
          {
+             if ([substring isEqualToString:@"\""])
+             {
+                 substring = @"\\\"";
+             }
+             if ([substring isEqualToString:@"\\"])
+             {
+                 substring = @"\\\\";
+             }
              [subText appendString:substring];
          }
          
@@ -1023,3 +1074,129 @@
 
 @end
 
+
+@implementation NSString (paths)
+
+#pragma mark Standard Paths
+
++ (NSString *)cachesPath
+{
+    static dispatch_once_t onceToken;
+    static NSString *cachedPath;
+    
+    dispatch_once(&onceToken, ^{
+        cachedPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+    });
+    
+    return cachedPath;
+}
+
++ (NSString *)documentsPath
+{
+    static dispatch_once_t onceToken;
+    static NSString *cachedPath;
+    
+    dispatch_once(&onceToken, ^{
+        cachedPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    });
+    
+    return cachedPath;
+}
+
++ (NSString *)libraryPath
+{
+    static dispatch_once_t onceToken;
+    static NSString *cachedPath;
+    
+    dispatch_once(&onceToken, ^{
+        cachedPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
+    });
+    
+    return cachedPath;
+}
+
++ (NSString *)bundlePath
+{
+    return [[NSBundle mainBundle] bundlePath];
+}
+
+
+#pragma mark Temporary Paths
+
++ (NSString *)temporaryPath
+{
+    static dispatch_once_t onceToken;
+    static NSString *cachedPath;
+    
+    dispatch_once(&onceToken, ^{
+        cachedPath = NSTemporaryDirectory();
+    });
+    
+    return cachedPath;
+}
+
++ (NSString *)pathForTemporaryFile
+{
+    CFUUIDRef newUniqueId = CFUUIDCreate(kCFAllocatorDefault);
+    CFStringRef newUniqueIdString = CFUUIDCreateString(kCFAllocatorDefault, newUniqueId);
+    NSString *tmpPath = [[NSString temporaryPath] stringByAppendingPathComponent:(__bridge NSString *)newUniqueIdString];
+    CFRelease(newUniqueId);
+    CFRelease(newUniqueIdString);
+    
+    return tmpPath;
+}
+
+#pragma mark Working with Paths
+
+// sdfds123 --> sdfds124
+- (NSString *)pathByIncrementingSequenceNumber
+{
+    NSString *baseName = [self stringByDeletingPathExtension];
+    NSString *extension = [self pathExtension];
+    
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\(([0-9]+)\\)$" options:0 error:NULL];
+    __block NSInteger sequenceNumber = 0;
+    
+    [regex enumerateMatchesInString:baseName options:0 range:NSMakeRange(0, [baseName length]) usingBlock:^(NSTextCheckingResult *match, NSMatchingFlags flags, BOOL *stop){
+        
+        NSRange range = [match rangeAtIndex:1]; // first capture group
+        NSString *substring= [self substringWithRange:range];
+        
+        sequenceNumber = [substring integerValue];
+        *stop = YES;
+    }];
+    
+    NSString *nakedName = [baseName pathByDeletingSequenceNumber];
+    
+    if ([extension isEqualToString:@""])
+    {
+        return [nakedName stringByAppendingFormat:@"(%d)", (int)sequenceNumber+1];
+    }
+    
+    return [[nakedName stringByAppendingFormat:@"(%d)", (int)sequenceNumber+1] stringByAppendingPathExtension:extension];
+}
+
+// sdfds123 --> sdfds
+- (NSString *)pathByDeletingSequenceNumber
+{
+    NSString *baseName = [self stringByDeletingPathExtension];
+    
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\([0-9]+\\)$" options:0 error:NULL];
+    __block NSRange range = NSMakeRange(NSNotFound, 0);
+    
+    [regex enumerateMatchesInString:baseName options:0 range:NSMakeRange(0, [baseName length]) usingBlock:^(NSTextCheckingResult *match, NSMatchingFlags flags, BOOL *stop) {
+        
+        range = [match range];
+        
+        *stop = YES;
+    }];
+    
+    if (range.location != NSNotFound)
+    {
+        return [self stringByReplacingCharactersInRange:range withString:@""];
+    }
+    
+    return self;
+}
+
+@end

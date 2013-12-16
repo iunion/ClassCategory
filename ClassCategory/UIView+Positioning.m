@@ -258,3 +258,64 @@
 
 @end
 
+
+#pragma mark -
+#pragma mark UIView + TTUICommon
+
+@implementation UIView (TTUICommon)
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (UIViewController *)viewController
+{
+    for (UIView *next = [self superview]; next; next = next.superview)
+    {
+        UIResponder *nextResponder = [next nextResponder];
+        if ([nextResponder isKindOfClass:[UIViewController class]])
+        {
+            return (UIViewController *)nextResponder;
+        }
+    }
+    
+    return nil;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (UIView *)descendantOrSelfWithClass:(Class)cls
+{
+    if ([self isKindOfClass:cls])
+    {
+        return self;
+    }
+    
+    for (UIView *child in self.subviews)
+    {
+        UIView *it = [child descendantOrSelfWithClass:cls];
+        if (it)
+        {
+            return it;
+        }
+    }
+    
+    return nil;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (UIView *)ancestorOrSelfWithClass:(Class)cls
+{
+    if ([self isKindOfClass:cls])
+    {
+        return self;
+    }
+    else if (self.superview)
+    {
+        return [self.superview ancestorOrSelfWithClass:cls];
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+@end

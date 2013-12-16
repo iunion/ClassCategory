@@ -18,6 +18,8 @@
 - (NSArray *)arrayForKey:(NSString *)key;
 - (NSDictionary *)dictionaryForKey:(NSString *)key;
 
+- (BOOL)containsObjectForKey:(id)key;
+
 @end
 
 @interface NSDictionary (DeepMutableCopy)

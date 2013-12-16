@@ -74,6 +74,7 @@
 		04792C73171E3FD70011FCB8 /* HLSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 045FE2C9171E39180036EFE2 /* HLSLogger.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		04792C75171E40460011FCB8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04792C74171E40460011FCB8 /* QuartzCore.framework */; };
 		048459501740951600652339 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0484594F1740951600652339 /* ImageIO.framework */; };
+		04929115185ED77C00361472 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04929114185ED77C00361472 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -207,6 +208,7 @@
 		04792C50171E3FC80011FCB8 /* UIImage+HLSExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+HLSExtensions.m"; sourceTree = "<group>"; };
 		04792C74171E40460011FCB8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0484594F1740951600652339 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		04929114185ED77C00361472 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -214,6 +216,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04929115185ED77C00361472 /* Accelerate.framework in Frameworks */,
 				048459501740951600652339 /* ImageIO.framework in Frameworks */,
 				04792C75171E40460011FCB8 /* QuartzCore.framework in Frameworks */,
 				0414E0FC1713BC6200B7A4C5 /* libicucore.dylib in Frameworks */,
@@ -248,6 +251,7 @@
 		0414E08A1713A82A00B7A4C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				04929114185ED77C00361472 /* Accelerate.framework */,
 				0484594F1740951600652339 /* ImageIO.framework */,
 				04792C74171E40460011FCB8 /* QuartzCore.framework */,
 				0414E08B1713A82A00B7A4C5 /* UIKit.framework */,

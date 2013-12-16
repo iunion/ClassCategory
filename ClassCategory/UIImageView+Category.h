@@ -36,6 +36,8 @@
 + (id) imageViewWithImageNamed:(NSString*)imageName;
 + (id) imageViewWithFrame:(CGRect)frame;
 + (id) imageViewWithStretchableImage:(NSString*)imageName Frame:(CGRect)frame;
++ (id) imageViewWithImageArray:(NSArray*)imageArray duration:(NSTimeInterval)duration;
+
 
 - (void) setImageWithStretchableImage:(NSString*)imageName;
 

@@ -11,12 +11,61 @@
  */
 
 #import "NSDate+Category.h"
+#import "ARCHelper.h"
 
 #define DATE_COMPONENTS (NSYearCalendarUnit| NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSWeekdayOrdinalCalendarUnit)
 #define CURRENT_CALENDAR [NSCalendar currentCalendar]
 
 @implementation NSDate (wiCategory)
 
+
++ (NSString *)stringFromDate:(NSDate *)aDate
+{
+    NSDateFormatter *dateFormater = [[NSDateFormatter alloc] init];
+    [dateFormater setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS"];
+    return [dateFormater stringFromDate:aDate];
+}
+
++ (NSString *)stringFromNow
+{
+    return [NSDate stringFromDate:[NSDate date]];
+}
+
++ (NSString *)hmStringDateFromDate:(NSDate *)aDate
+{
+    NSTimeInterval timestamp = [aDate timeIntervalSince1970];
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSInteger past = now - timestamp;
+    if (past <= 0)
+    {
+        return @"刚刚";
+    }
+    else if (past < 60)
+    {
+        return [NSString stringWithFormat:@"%d秒前", past];
+    }
+    else if(past < 3600)
+    {
+        NSInteger min = past/60;
+        return [NSString stringWithFormat:@"%d分钟前", min];
+    }
+    else if (past < 86400)
+    {
+        NSInteger hour = past/3600;
+        return [NSString stringWithFormat:@"%d小时前", hour];
+    }
+    else if (past < 86400*2)
+    {
+        NSInteger day = past/86400;
+        return [NSString stringWithFormat:@"%d天前", day];
+    }
+    
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] ah_autorelease];
+    [dateFormat setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"] ah_autorelease]];
+    [dateFormat setDateFormat:@"yyyy-MM-dd"];
+    return [dateFormat stringFromDate:date];
+}
 
 //+ (NSDate*)dateWithToday
 //{

@@ -30,6 +30,8 @@
  */
 
 #import "UIImage+Category.h"
+// need Accelerate.framework
+#import <Accelerate/Accelerate.h>
 #import "ARCHelper.h"
 
 static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWidth, float ovalHeight)
@@ -94,7 +96,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
     
     UIImage *img = image;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(NULL, w, h, 8, 4 * w, colorSpace, kCGImageAlphaPremultipliedFirst);
+    CGContextRef context = CGBitmapContextCreate(NULL, w, h, 8, 4 * w, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrderDefault);
     CGRect rect = CGRectMake(0, 0, w, h);
     
     CGContextBeginPath(context);
@@ -120,7 +122,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
     
     UIImage *img = image;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(NULL, w, h, 8, 4 * w, colorSpace, kCGImageAlphaPremultipliedFirst);
+    CGContextRef context = CGBitmapContextCreate(NULL, w, h, 8, 4 * w, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrderDefault);
     CGRect rect = CGRectMake(0, 0, w, h);
     
     CGContextBeginPath(context);
@@ -482,7 +484,7 @@ CGFloat RadiansToDegrees(CGFloat radians) {return radians * 180/M_PI;};
     CGRect imageRect = CGRectMake(0, 0, self.size.width, self.size.height);
 
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
-	CGContextRef bmContext = CGBitmapContextCreate(NULL, width, height, 8/*Bits per component*/, width * 3, colorSpace, kCGImageAlphaNone);
+	CGContextRef bmContext = CGBitmapContextCreate(NULL, width, height, 8/*Bits per component*/, width * 3, colorSpace, kCGImageAlphaNone | kCGBitmapByteOrderDefault);
 	CGColorSpaceRelease(colorSpace);
 	if (!bmContext)
 		return nil;
@@ -936,7 +938,7 @@ static CGImageRef CreateMask(CGSize size, NSUInteger thickness)
 		// Try older method.
 		CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 		CGContextRef context = CGBitmapContextCreate(NULL, scaledWidth, scaledHeight, 8, (scaledWidth * 4),
-													 colorSpace, kCGImageAlphaPremultipliedLast);
+													 colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault);
 		CGImageRef sourceImg = CGImageCreateWithImageInRect([self CGImage], sourceRect);
 		CGContextDrawImage(context, destRect, sourceImg);
 		CGImageRelease(sourceImg);
@@ -964,3 +966,99 @@ static CGImageRef CreateMask(CGSize size, NSUInteger thickness)
 
 
 @end
+
+#pragma mark - UIImage + Blur
+
+@implementation UIImage (Blur)
+
+- (UIImage *)boxblurImageWithBlur:(CGFloat)blur
+{
+    if (blur < 0.f || blur > 1.f) {
+        blur = 0.5f;
+    }
+    int boxSize = (int)(blur * 40);
+    boxSize = boxSize - (boxSize % 2) + 1;
+    
+    CGImageRef img = self.CGImage;
+    
+    vImage_Buffer inBuffer, outBuffer;
+    
+    vImage_Error error;
+    
+    void *pixelBuffer;
+    
+    
+    //create vImage_Buffer with data from CGImageRef
+    
+    CGDataProviderRef inProvider = CGImageGetDataProvider(img);
+    CFDataRef inBitmapData = CGDataProviderCopyData(inProvider);
+    
+    
+    inBuffer.width = CGImageGetWidth(img);
+    inBuffer.height = CGImageGetHeight(img);
+    inBuffer.rowBytes = CGImageGetBytesPerRow(img);
+    
+    inBuffer.data = (void*)CFDataGetBytePtr(inBitmapData);
+    
+    //create vImage_Buffer for output
+    
+    pixelBuffer = malloc(CGImageGetBytesPerRow(img) * CGImageGetHeight(img));
+    
+    if(pixelBuffer == NULL)
+        NSLog(@"No pixelbuffer");
+    
+    outBuffer.data = pixelBuffer;
+    outBuffer.width = CGImageGetWidth(img);
+    outBuffer.height = CGImageGetHeight(img);
+    outBuffer.rowBytes = CGImageGetBytesPerRow(img);
+    
+    // Create a third buffer for intermediate processing
+    void *pixelBuffer2 = malloc(CGImageGetBytesPerRow(img) * CGImageGetHeight(img));
+    vImage_Buffer outBuffer2;
+    outBuffer2.data = pixelBuffer2;
+    outBuffer2.width = CGImageGetWidth(img);
+    outBuffer2.height = CGImageGetHeight(img);
+    outBuffer2.rowBytes = CGImageGetBytesPerRow(img);
+    
+    //perform convolution
+    error = vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer2, NULL, 0, 0, boxSize, boxSize, NULL, kvImageEdgeExtend);
+    if (error) {
+        NSLog(@"1 error from convolution %ld", error);
+    }
+    
+    error = vImageBoxConvolve_ARGB8888(&outBuffer2, &inBuffer, NULL, 0, 0, boxSize, boxSize, NULL, kvImageEdgeExtend);
+    if (error) {
+        NSLog(@"2 error from convolution %ld", error);
+    }
+    
+    error = vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer, NULL, 0, 0, boxSize, boxSize, NULL, kvImageEdgeExtend);
+    if (error) {
+        NSLog(@"3 error from convolution %ld", error);
+    }
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef ctx = CGBitmapContextCreate(outBuffer.data,
+                                             outBuffer.width,
+                                             outBuffer.height,
+                                             8,
+                                             outBuffer.rowBytes,
+                                             colorSpace,
+                                             kCGImageAlphaNoneSkipLast | kCGBitmapByteOrderDefault);
+    CGImageRef imageRef = CGBitmapContextCreateImage (ctx);
+    UIImage *returnImage = [UIImage imageWithCGImage:imageRef];
+    
+    //clean up
+    CGContextRelease(ctx);
+    CGColorSpaceRelease(colorSpace);
+    
+    free(pixelBuffer);
+    free(pixelBuffer2);
+    CFRelease(inBitmapData);
+    
+    CGImageRelease(imageRef);
+    
+    return returnImage;
+}
+
+@end
+

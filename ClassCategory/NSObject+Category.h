@@ -25,7 +25,7 @@
 - (BOOL)isValided;
 - (BOOL)isNotNSNull;
 - (BOOL)isNotEmpty;
-
+- (BOOL)isNotEmptyDictionary;
 @end
 
 /*

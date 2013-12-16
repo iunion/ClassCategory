@@ -119,3 +119,8 @@ typedef enum {
 - (UIImage *)imageScaledToFitSize:(CGSize)size; // uses MGImageResizeScale
 
 @end
+
+@interface UIImage (Blur)
+- (UIImage *)boxblurImageWithBlur:(CGFloat)blur;
+@end
+

@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+Category.h"
+//#import "ARCHelper.h"
 
 @implementation NSObject (wiCategory)
 
@@ -167,6 +168,17 @@
                  && [(NSData *)self length] == 0)
              || ([self respondsToSelector:@selector(count)]
                  && [(NSArray *)self count] == 0));
+}
+
+
+- (BOOL)isNotEmptyDictionary
+{
+    if ([self isNotEmpty])
+    {
+        return [self isKindOfClass:[NSDictionary class]];
+    }
+    
+    return NO;
 }
 
 @end

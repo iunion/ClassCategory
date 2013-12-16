@@ -81,3 +81,22 @@
 - (void)swapDepthsWithView:(UIView*)swapView;
 
 @end
+
+@interface UIView (TTUICommon)
+
+/**
+ * The view controller whose view contains this view.
+ */
+- (UIViewController *)viewController;
+
+/**
+ * Finds the first descendant view (including this view) that is a member of a particular class.
+ */
+- (UIView *)descendantOrSelfWithClass:(Class)cls;
+
+/**
+ * Finds the first ancestor view (including this view) that is a member of a particular class.
+ */
+- (UIView *)ancestorOrSelfWithClass:(Class)cls;
+
+@end

@@ -174,6 +174,11 @@
     return value;
 }
 
+- (BOOL)containsObjectForKey:(id)key
+{
+    return [[self allKeys] containsObject:key];
+}
+
 @end
 
 

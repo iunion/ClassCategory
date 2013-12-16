@@ -28,11 +28,11 @@
 
 @end
 
-@interface UIView (TTUICommon)
 
-/**
- * The view controller whose view contains this view.
- */
-- (UIViewController *)viewController;
+@interface UIView (Screenshot)
+
+- (UIImage *)screenshot;
+- (UIImage *)screenshotWithRect:(CGRect)rect;
 
 @end
+
